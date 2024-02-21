@@ -3,7 +3,7 @@ export interface IPlayer {
     username: string;
     globalName: string;
     blacklistedPlayerId: string | undefined;
-    ratings: Map<string, number>;
+    rating: number;
 }
 
 export interface ILobbyPlayer {

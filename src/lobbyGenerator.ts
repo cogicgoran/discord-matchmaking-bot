@@ -1,30 +1,25 @@
-import { blacklistCommand } from './commands/blacklist';
 import config from './config';
 import type { IPlayer, ILobbyPlayer } from './interfaces';
 import { retrieveLobbyPlayers } from './repository/players';
-import { MAX_PLAYERS_5V5, MAX_RANDOM_DEVIATION } from './utils/constants';
 
-const DEFAULT_PLAYER_RATING = 2;
-
-function calculateRating(ratings: Map<string, number>): number {
-    if (ratings.size === 0) return DEFAULT_PLAYER_RATING;
-    let total = 0;
-    ratings.forEach((rating) => {
-        total += rating;
-    });
-    return Number((total / ratings.size).toFixed(1));
+function getSaltedRating(maxDeviation: number): number {
+    return Math.random() * maxDeviation * (Math.random() > 0.5 ? -1 : 1)
 }
 
-function generateLobbyPlayer(player: IPlayer, allPlayers: Array<IPlayer>): ILobbyPlayer {
+function generateLobbyPlayer(player: IPlayer, allPlayers: Array<IPlayer>, maxDeviation: number): ILobbyPlayer {
     return {
         discordId: player.discordId,
         username: player.username,
         globalName: player.globalName,
         teamProbability: 5,
-        rating: calculateRating(player.ratings) + Math.random() * MAX_RANDOM_DEVIATION * (Math.random() > 0.5 ? -1 : 1),
+        rating: player.rating + getSaltedRating(maxDeviation),
         blacklistedPlayerId: player.blacklistedPlayerId,
         blacklistedBy: allPlayers.filter((otherPlayer) => otherPlayer.blacklistedPlayerId === player.discordId),
     }
+}
+
+function calculateTeamRating(players: Array<ILobbyPlayer>) {
+    return players.reduce((tot, cur) => tot + cur.rating, 0);
 }
 
 export async function makeLobby(playerIds: Array<string>) {
@@ -33,42 +28,22 @@ export async function makeLobby(playerIds: Array<string>) {
     }
 
     const players = await retrieveLobbyPlayers(playerIds);
-    const lobbyPlayers: Array<ILobbyPlayer> = players.map((player) => generateLobbyPlayer(player, players));
-    lobbyPlayers.sort((p1: ILobbyPlayer, p2: ILobbyPlayer) => {
-        return p1.rating - p2.rating;
-    });
+    const maxPlayerRatingDeviation = 0 * players.reduce((avg, cur) => avg + cur.rating / playerIds.length, 0);
+    const lobbyPlayers: Array<ILobbyPlayer> = players.map((player) => generateLobbyPlayer(player, players, maxPlayerRatingDeviation));
 
-    const BLACKLIST_DEVIATION_SCORE = 4;
+    lobbyPlayers.sort((p1: ILobbyPlayer, p2: ILobbyPlayer) => p2.rating - p1.rating);
 
-    lobbyPlayers.forEach((ply, idx) => { ply.teamProbability += idx * Math.sign(idx % 2 === 0 ? 1 : -1) });
     const teamOne: Array<ILobbyPlayer> = [];
     const teamTwo: Array<ILobbyPlayer> = [];
-    for (let i = 0; i < players.length; i++) {
-        if (i % 2 === 0) {
-            if (lobbyPlayers[i].blacklistedPlayerId) {
-                const blacklistedPlayer = lobbyPlayers.find((player) => player.discordId === lobbyPlayers[i].blacklistedPlayerId);
-                if (blacklistedPlayer) {
-                    lobbyPlayers[i].teamProbability += BLACKLIST_DEVIATION_SCORE;
-                }
-            }
+
+    for (let i = 0; i < lobbyPlayers.length; i++) {
+        if (calculateTeamRating(teamOne) >= calculateTeamRating(teamTwo) && teamTwo.length < config.MAX_PLAYERS_IN_LOBBY / 2) {
+            teamTwo.push(lobbyPlayers[i]);
+        } else if (teamOne.length === config.MAX_PLAYERS_IN_LOBBY / 2) {
+            teamTwo.push(lobbyPlayers[i]);
         } else {
-            if (lobbyPlayers[i].blacklistedPlayerId) {
-                const blacklistedPlayer = lobbyPlayers.find((player) => player.discordId === lobbyPlayers[i].blacklistedPlayerId);
-                if (blacklistedPlayer) {
-                    lobbyPlayers[i].teamProbability -= BLACKLIST_DEVIATION_SCORE;
-                }
-            }
+            teamOne.push(lobbyPlayers[i]);
         }
-    }
-    lobbyPlayers.sort((p1, p2) => p1.teamProbability - p2.teamProbability);
-    let i = 0;
-    while (lobbyPlayers.length > 0) {
-        if (i % 2 === 0) {
-            teamOne.push(lobbyPlayers.shift()!);
-        } else {
-            teamTwo.push(lobbyPlayers.pop()!);
-        }
-        i++;
     }
 
     return {
@@ -88,5 +63,3 @@ export async function makeLobby(playerIds: Array<string>) {
         }
     }
 }
-
-// Priority: blacklisted

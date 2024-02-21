@@ -4,14 +4,14 @@ export class Player implements IPlayer {
     blacklistedPlayerId: string | undefined;
     discordId: string;
     globalName: string;
-    ratings: Map<string, number>;
+    rating: number;
     username: string;
     constructor(data : any) {
         this.blacklistedPlayerId = data.blacklistedPlayerId;
         this.discordId = data.discordId;
         this.globalName = data.globalName;
         this.username = data.username;
-        this.ratings = new Map(Object.entries(data.ratings));
+        this.rating = data.rating;
         this.validate(data);
     }
 

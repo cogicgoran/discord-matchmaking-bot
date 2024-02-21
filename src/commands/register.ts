@@ -9,7 +9,7 @@ export async function registerCommand(message: discord.Message<boolean>) {
             blacklistedPlayerId: undefined,
             username: message.author.username,
             globalName: message.author.globalName ?? message.author.username,
-            ratings: new Map()
+            rating: 2
           }
           await addPlayer(player);
     } catch (error) {
