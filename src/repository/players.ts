@@ -14,18 +14,20 @@ export async function getPlayer(discordId: string): Promise<IPlayer | null> {
     return null;
 }
 
+export async function patchPlayer(player: IPlayer, playerData: Pick<IPlayer,'blacklistedPlayerId'>) {
+    await databaseClient.db('matchmaking').collection('players').updateOne({discordId: player.discordId}, {$set:{blacklistedPlayerId: playerData.blacklistedPlayerId}})
+}
+
 export async function createPlayer(playerData: IPlayer): Promise<IPlayer> {
     const player = await databaseClient.db('matchmaking').collection('players').insertOne({ ...playerData });
     return new Player(player);
 }
 
 export async function retrieveLobbyPlayers(playerIds: Array<string>): Promise<Array<IPlayer>> {
-    const findResults = databaseClient.db('matchmaking').collection('players').find({ discordId: { $all: playerIds } });
-    const players: Array<Player> = [];
-    for await (const document of findResults) {
-        players.push(new Player(document));
-    }
-    return players;
+    const cursor = databaseClient.db('matchmaking').collection('players').find({ discordId: { $in: playerIds } })
+    const players = await cursor.toArray();
+    await cursor.close();
+    return players.map((player) => new Player(player));
 }
 
 // export function blacklistPlayer(playerId: string, blacklistedPlayerId: string) {

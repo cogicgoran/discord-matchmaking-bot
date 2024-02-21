@@ -13,4 +13,5 @@ export interface ILobbyPlayer {
     rating: number;
     blacklistedPlayerId: string | undefined;
     blacklistedBy: Array<IPlayer>;
+    teamProbability: number;
 }

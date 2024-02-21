@@ -1,8 +1,7 @@
-import discord from 'discord.js';
+import discord, { ThreadAutoArchiveDuration } from 'discord.js';
 import { createPlayer, getPlayer } from '../repository/players';
 import { IPlayer } from '../interfaces';
 import { matchmakingQueue } from '../data/queue';
-import { MAX_PLAYERS_5V5 } from '../utils/constants';
 import { makeLobby } from '../lobbyGenerator';
 import { client as discordClient } from '../discord-client/discord-client';
 import config from '../config';
@@ -21,7 +20,8 @@ export async function queueCommand(message: discord.Message<boolean>) {
             player = await createPlayer(playerData);
         };
         if (matchmakingQueue.includes(player.discordId)) {
-            await (await message.startThread({ name: 'Already queued' })).send('You are already queued');
+
+            await (await message.startThread({ name: 'Already queued', autoArchiveDuration: ThreadAutoArchiveDuration.OneHour })).send('You are already queued');
             setTimeout(async () => {
                 try {
                     await message.thread?.delete();
@@ -33,15 +33,15 @@ export async function queueCommand(message: discord.Message<boolean>) {
         }
         matchmakingQueue.push(player.discordId);
         // TODO: what if multiple requests are sent simultaneously, research how node functions more in depth
-        if (matchmakingQueue.length === MAX_PLAYERS_5V5) {
+        if (matchmakingQueue.length === config.MAX_PLAYERS_IN_LOBBY) {
             const lobbyResults = await makeLobby(matchmakingQueue);
             const channel = await discordClient.channels.fetch(message.channel.id);
-            await (channel as any).send((lobbyResults).print()); // TODO: Investigate, I found this method, but it's not listed in types for some reason
+            await (channel as any).send(lobbyResults.print()); // TODO: Investigate, I found this method, but it's not listed in types for some reason
         }
     } catch (error) {
         console.log('[ERROR: QueueCommand]:', error);
     } finally {
-        if (matchmakingQueue.length === MAX_PLAYERS_5V5) {
+        if (matchmakingQueue.length === config.MAX_PLAYERS_IN_LOBBY) {
             matchmakingQueue.splice(0);
         }
     }
@@ -54,7 +54,7 @@ export function matchmakingLimitCommand(maxPlayersInLobby: 2 | 10) {
 
 export async function getLobbyCommand(message: discord.Message<boolean>) {
     try {
-        if(matchmakingQueue.length === 0) {
+        if (matchmakingQueue.length === 0) {
             await message.reply("Lobby is empty");
             return;
         }

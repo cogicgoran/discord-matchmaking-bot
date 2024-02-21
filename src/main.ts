@@ -2,11 +2,14 @@ import config from './config';
 import { registerCommand } from './commands/register';
 import { getLobbyCommand, matchmakingLimitCommand, queueCommand } from './commands/queue';
 import { client as discordClient } from './discord-client/discord-client';
+import { blacklistCommand, getBlacklistCommand } from './commands/blacklist';
 
 const ADMIN_USERNAME = 'aragok';
 
-discordClient.on('ready', () => {
-  console.log(`Logged in as ${discordClient.user!.tag}`);
+const guilds = new Set();
+
+discordClient.on('ready', (client) => {
+  console.log('[ClientReady]:', client.user.tag);
 });
 
 discordClient.on('messageCreate', (message) => {
@@ -31,6 +34,15 @@ discordClient.on('messageCreate', (message) => {
     getLobbyCommand(message);
     return;
   }
+  if(message.content === '!blacklist') {
+    getBlacklistCommand(message);
+    return;
+  }
+  if(message.content.startsWith('!blacklist')) {
+    blacklistCommand(message);
+    return;
+  }
+
 });
 
 discordClient.login(config.env['DISCORD_BOT_TOKEN']);
