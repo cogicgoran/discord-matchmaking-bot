@@ -1,12 +1,10 @@
 import config from './config';
 import { registerCommand } from './commands/register';
-import { getLobbyCommand, matchmakingLimitCommand, queueCommand } from './commands/queue';
 import { client as discordClient } from './discord-client/discord-client';
 import { blacklistCommand, getBlacklistCommand } from './commands/blacklist';
+import { getLobbyCommand, matchmakingLimitCommand, queueCommand } from './commands/queue';
 
 const ADMIN_USERNAME = 'aragok';
-
-const guilds = new Set();
 
 discordClient.on('ready', (client) => {
   console.log('[ClientReady]:', client.user.tag);

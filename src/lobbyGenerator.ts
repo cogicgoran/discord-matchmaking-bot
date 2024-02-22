@@ -1,5 +1,6 @@
 import config from './config';
 import type { IPlayer, ILobbyPlayer } from './interfaces';
+// import { createMatch } from './repository/matches';
 import { retrieveLobbyPlayers } from './repository/players';
 
 function getSaltedRating(maxDeviation: number): number {
@@ -46,11 +47,14 @@ export async function makeLobby(playerIds: Array<string>) {
         }
     }
 
+    // const matchData = await createMatch(teamOne, teamTwo);
+
     return {
+
         teamOne,
         teamTwo,
         print: (): string => {
-            let output = '';
+            let output = 'MATCH ID: getMatchId';
             output += 'Team A:\n';
             teamOne.forEach((player) => {
                 output += `\t<@${player.discordId}>\n`;

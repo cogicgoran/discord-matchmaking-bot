@@ -15,7 +15,7 @@ export async function queueCommand(message: discord.Message<boolean>) {
                 blacklistedPlayerId: undefined,
                 username: message.author.username,
                 globalName: message.author.globalName ?? message.author.username,
-                ratings: new Map()
+                rating: 1
             }
             player = await createPlayer(playerData);
         };
