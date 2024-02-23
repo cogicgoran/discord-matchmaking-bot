@@ -5,6 +5,7 @@ Sorts group of people in lobby into two teams, depending on criteria such as pla
 
 
 ## Permissions
+- View Audit Logs
 - Send Messages
 - Create Public Threads
 - Create Private Threads

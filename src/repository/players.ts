@@ -37,3 +37,9 @@ export async function updateRating(player: IPlayer) {
         console.log('[UpdateRatingError]:', error);
     }
 }
+
+export async function getTopRated() {
+    const cursor = databaseClient.db('matchmaking').collection('players').find({}, { limit: 10, sort: { rating: 'desc' } });
+    const players = await cursor.toArray();
+    return players;
+}

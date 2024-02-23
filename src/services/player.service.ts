@@ -11,22 +11,26 @@ export async function updateRatings(matchData: { teamOne: Array<ILobbyPlayer>, t
 export function getPlayersAfterRatingCalculations(players: Array<IPlayer>, matchData: { teamOne: Array<ILobbyPlayer>, teamTwo: Array<ILobbyPlayer> }, winningTeam: 'A' | 'B') {
     const avgLobbyRating = players.reduce((tot, cur) => tot + cur.rating / players.length, 0);
     const teamAIds = matchData.teamOne.map((player) => player.discordId);
+    console.log('BEFORE_CALC:', players.map((p) => p.rating + ": " + p.rating));
     players.forEach((player) => {
         const diffToMatchAvg = player.rating - avgLobbyRating;
         if (winningTeam === 'A') {
             if (teamAIds.includes(player.discordId)) {
                 player.rating = Math.min(10, ratingChangeFn(player.rating, diffToMatchAvg, true));
-            } else {
-                player.rating = Math.max(0, ratingChangeFn(player.rating, diffToMatchAvg, false));
+                return;
             }
+            player.rating = Math.max(0, ratingChangeFn(player.rating, diffToMatchAvg, false));
+            return
         } else {
             if (teamAIds.includes(player.discordId)) {
                 player.rating = Math.max(0, ratingChangeFn(player.rating, diffToMatchAvg, false));
-            } else {
-                player.rating = Math.min(10, ratingChangeFn(player.rating, diffToMatchAvg, true));
+                return;
             }
+            player.rating = Math.min(10, ratingChangeFn(player.rating, diffToMatchAvg, true));
+            return;
         }
     });
+    console.log('AFTER_CALC:', players.map((p) => p.rating + ": " + p.rating));
     return players;
 }
 
@@ -37,5 +41,5 @@ export function getPlayersAfterRatingCalculations(players: Array<IPlayer>, match
  * @returns 
  */
 function ratingChangeFn(currentRating: number, diffToMatchAvg: number, isWin: boolean) {
-    return currentRating + (Math.sign(isWin ? 1 : -1) * diffToMatchAvg) / (100 + 0.2)
+    return currentRating + (isWin ? 1 : -1) * ((diffToMatchAvg) / 100 + 0.2)
 }

@@ -4,36 +4,54 @@ import { client as discordClient } from './discord-client/discord-client';
 import { blacklistCommand, getBlacklistCommand } from './commands/blacklist';
 import { getLobbyCommand, matchmakingLimitCommand, queueCommand } from './commands/queue';
 import { setMatchResultCommand } from './commands/matches';
-import { createChannelCommand, initChannel, isBotChannel, removeChannel } from './commands/channel';
+import { createChannelCommand, initChannel, isBotChannel, registerChannel, removeChannel, removeGuild } from './commands/channel';
+import { getTopRatedCommand } from './commands/players';
+import { AuditLogEvent } from 'discord.js';
 
 const ADMIN_USERNAME = 'aragok';
-
-discordClient.on('ready', (client) => {
-  console.log('[ClientReady]:', client.user.tag);
-});
 
 discordClient.on('guildCreate', (guild) => {
   initChannel(guild);
 });
 
+discordClient.on('guildAvailable', async (guild) => {
+  try {
+    const audit_logs = await guild.fetchAuditLogs({
+      limit: 1,
+      type: AuditLogEvent.ChannelCreate,
+      user: discordClient.user!.id
+    });
+    const entries = audit_logs.entries;
+    const entry = entries.first();
+    if (!entry) {
+      return;
+    }
+    const channel = await guild.channels.fetch(entry.targetId!);
+    if (!channel) return;
+    registerChannel(channel);
+  } catch (error) {
+    console.log('[RetrieveChannelError]:', error);
+  }
+})
+
 discordClient.on('guildDelete', (guild) => {
-  removeChannel(guild.id);
+  removeGuild(guild.id);
 });
 
 // wrong type?
 discordClient.on('channelDelete', (channel: any) => {
-  removeChannel(channel?.id);
+  removeChannel(channel);
 })
 
 discordClient.on('messageCreate', (message) => {
   if (message.author.bot) return;
-  if (message.content === '!MM_INIT') {
+  if (message.content === '!MM_INIT' && message.author.username === ADMIN_USERNAME) {
     createChannelCommand(message);
     return;
   }
   if (!isBotChannel(message)) return;
   if (message.content === '!help') {
-    message.reply(`\`!r\` - Register yourself as a player\n\`!q\` - Queue into matchmaking lobby\n\`!lobby\` - List all players in a lobby`)    
+    message.reply(`\`!r\` - Register yourself as a player\n\`!q\` - Queue into matchmaking lobby\n\`!lobby\` - List all players in a lobby\n\`!top10\` - List top 10 players with ratings`)
     return;
   }
   if (['!r', '!reg', '!register'].includes(message.content)) {
@@ -58,6 +76,10 @@ discordClient.on('messageCreate', (message) => {
   }
   if (message.content === '!blacklist') {
     getBlacklistCommand(message);
+    return;
+  }
+  if (message.content === '!top10') {
+    getTopRatedCommand(message);
     return;
   }
   if (message.content.startsWith('!blacklist')) {
