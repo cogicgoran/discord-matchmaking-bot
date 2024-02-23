@@ -33,7 +33,6 @@ export async function makeLobby(playerIds: Array<string>) {
     for (let i = 1; i < players.length; i++) {
         maxPlayerRatingDeviation += (players[i].rating - players[i - 1].rating) / (playerIds.length - 1);
     }
-    // const  = 0. * players.reduce((avg, cur) => avg + cur.rating / playerIds.length, 0);
     const lobbyPlayers: Array<ILobbyPlayer> = players.map((player) => generateLobbyPlayer(player, players, maxPlayerRatingDeviation));
 
     lobbyPlayers.sort((p1: ILobbyPlayer, p2: ILobbyPlayer) => p2.rating - p1.rating);

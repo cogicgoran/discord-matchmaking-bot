@@ -5,7 +5,7 @@ import { updateRatings } from '../services/player.service';
 export async function setMatchResultCommand(message: discord.Message<boolean>){
     try {
         const data = message.content.split(" ");
-        // match id winner 1/2
+        // Example: "!match {matchId} winner A"
         if(data.length !== 4) {
             console.log('E1');
             throw new Error(`Unexpected match command ${message.content}`);
