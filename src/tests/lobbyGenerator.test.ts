@@ -79,6 +79,10 @@ it('should create 2 teams with 5 players each', async () => {
         }
         ]
     });
+jest.setMock('../repository/matches', {
+    __esModule: true,
+    createMatch:() => ({insertedId: 'testId'})
+})
     const { makeLobby } = require('../lobbyGenerator');
     const teams = await makeLobby(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']);
     expect(teams.teamOne.length).toBe(5);

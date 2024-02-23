@@ -15,18 +15,18 @@ export async function queueCommand(message: discord.Message<boolean>) {
                 blacklistedPlayerId: undefined,
                 username: message.author.username,
                 globalName: message.author.globalName ?? message.author.username,
-                rating: 1
+                rating: 3
             }
-            player = await createPlayer(playerData);
+            await createPlayer(playerData);
+            player = (await getPlayer(playerData.discordId))!;
         };
         if (matchmakingQueue.includes(player.discordId)) {
-
-            await (await message.startThread({ name: 'Already queued', autoArchiveDuration: ThreadAutoArchiveDuration.OneHour })).send('You are already queued');
+            (await message.startThread({ name: 'Already queued', autoArchiveDuration: ThreadAutoArchiveDuration.OneHour, reason:"Player is already queued in lobby." }));
             setTimeout(async () => {
                 try {
                     await message.thread?.delete();
                 } catch (error) {
-                    console.log('[DeleteThread]:', error);
+                    console.log('[DeleteThreadError]:', error);
                 }
             }, 5000);
             return;

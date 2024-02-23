@@ -10,3 +10,4 @@ Sorts group of people in lobby into two teams, depending on criteria such as pla
 - Create Private Threads
 - Manage Threads ?
 - Read Message History
+- Manage Channels
