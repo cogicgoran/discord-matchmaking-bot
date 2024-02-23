@@ -4,34 +4,23 @@ import { client as discordClient } from './discord-client/discord-client';
 import { blacklistCommand, getBlacklistCommand } from './commands/blacklist';
 import { getLobbyCommand, matchmakingLimitCommand, queueCommand } from './commands/queue';
 import { setMatchResultCommand } from './commands/matches';
-import { createChannelCommand, initChannel, isBotChannel, registerChannel, removeChannel, removeGuild } from './commands/channel';
+import { createChannelCommand, initChannel, isBotChannel, removeChannel, removeGuild } from './commands/channel';
 import { getTopRatedCommand } from './commands/players';
-import { AuditLogEvent } from 'discord.js';
+import { handleGuildAvailableEvent } from './services/discord.service';
 
 const ADMIN_USERNAME = 'aragok';
+
+discordClient.on('ready', (client) => {
+  console.log('[ClientReady]:', client.user.tag);
+});
 
 discordClient.on('guildCreate', (guild) => {
   initChannel(guild);
 });
 
-discordClient.on('guildAvailable', async (guild) => {
-  try {
-    const audit_logs = await guild.fetchAuditLogs({
-      limit: 1,
-      type: AuditLogEvent.ChannelCreate,
-      user: discordClient.user!.id
-    });
-    const entries = audit_logs.entries;
-    const entry = entries.first();
-    if (!entry) {
-      return;
-    }
-    const channel = await guild.channels.fetch(entry.targetId!);
-    if (!channel) return;
-    registerChannel(channel);
-  } catch (error) {
-    console.log('[RetrieveChannelError]:', error);
-  }
+discordClient.on('guildAvailable', (guild) => {
+  // Checks for channels built by bot and save it to memory
+  handleGuildAvailableEvent(guild);
 })
 
 discordClient.on('guildDelete', (guild) => {
