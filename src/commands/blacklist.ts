@@ -19,7 +19,7 @@ export async function blacklistCommand(message: discord.Message<boolean>) {
         if (message.author.id === blacklistedUser.id) {
             throw new Error(`Player cannot blacklist himself`);
         }
-        const player = await getPlayer(message.author.id);
+        const player = await getPlayer(message.author.id, message.guildId!);
         if (!player) {
             throw new Error(`User ${message.author.globalName || message.author.username} is not a player`);
         }
@@ -31,7 +31,7 @@ export async function blacklistCommand(message: discord.Message<boolean>) {
 
 export async function getBlacklistCommand(message: discord.Message<boolean>) {
     try {
-        const player = await getPlayer(message.author.id);
+        const player = await getPlayer(message.author.id, message.guildId!);
         if (!player) {
             throw new Error("Player does not exist");
         }

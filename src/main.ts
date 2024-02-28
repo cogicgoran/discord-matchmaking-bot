@@ -1,7 +1,6 @@
 import config from './config';
 import { registerCommand } from './commands/register';
 import { client as discordClient } from './discord-client/discord-client';
-import { blacklistCommand, getBlacklistCommand } from './commands/blacklist';
 import { getLobbyCommand, matchmakingLimitCommand, queueCommand } from './commands/queue';
 import { setMatchResultCommand } from './commands/matches';
 import { createChannelCommand, initChannel, isBotChannel, removeChannel, removeGuild } from './commands/channel';
@@ -52,29 +51,29 @@ discordClient.on('messageCreate', (message) => {
     return;
   }
   if (message.content === '!mm2' && message.author.username === ADMIN_USERNAME) {
-    matchmakingLimitCommand(2);
+    matchmakingLimitCommand(message.guildId!, 2);
     return;
   }
   if (message.content === '!mm10' && message.author.username === ADMIN_USERNAME) {
-    matchmakingLimitCommand(10);
+    matchmakingLimitCommand(message.guildId!, 10);
     return;
   }
   if (message.content === '!lobby') {
     getLobbyCommand(message);
     return;
   }
-  if (message.content === '!blacklist') {
-    getBlacklistCommand(message);
-    return;
-  }
+  // if (message.content === '!blacklist') {
+  //   getBlacklistCommand(message);
+  //   return;
+  // }
   if (message.content === '!top10') {
     getTopRatedCommand(message);
     return;
   }
-  if (message.content.startsWith('!blacklist')) {
-    blacklistCommand(message);
-    return;
-  }
+  // if (message.content.startsWith('!blacklist')) {
+  //   blacklistCommand(message);
+  //   return;
+  // }
   if (message.content.startsWith("!match")) {
     setMatchResultCommand(message);
     return

@@ -5,13 +5,14 @@ import { addPlayer } from '../repository/players';
 export async function registerCommand(message: discord.Message<boolean>) {
     try {
         const player: IPlayer = {
+            guildId: message.guildId!,
             discordId: message.author.id,
             blacklistedPlayerId: undefined,
             username: message.author.username,
             globalName: message.author.globalName ?? message.author.username,
             rating: 2
-          }
-          await addPlayer(player);
+        }
+        await addPlayer(player);
     } catch (error) {
         console.log('[ERROR: RegisterCommand]:', error);
     }

@@ -23,12 +23,12 @@ function calculateTeamRating(players: Array<ILobbyPlayer>) {
     return players.reduce((tot, cur) => tot + cur.rating, 0);
 }
 
-export async function makeLobby(playerIds: Array<string>) {
+export async function makeLobby(playerIds: Array<string>, guildId: string) {
     if (playerIds.length !== config.MAX_PLAYERS_IN_LOBBY) {
         throw new Error(`Invalid lobby size! Received lobby of size '${playerIds.length}'`);
     }
 
-    const players = await retrieveLobbyPlayers(playerIds);
+    const players = await retrieveLobbyPlayers(playerIds, guildId);
     let maxPlayerRatingDeviation = 0;
     for (let i = 1; i < players.length; i++) {
         maxPlayerRatingDeviation += (players[i].rating - players[i - 1].rating) / (playerIds.length - 1);

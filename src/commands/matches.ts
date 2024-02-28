@@ -27,7 +27,7 @@ export async function setMatchResultCommand(message: discord.Message<boolean>){
             throw new Error("Match result already exists");
         }
         await setWinnerMatch(matchData, matchResult);
-        updateRatings(matchData as any, matchResult);
+        updateRatings(matchData, matchResult);
     } catch (error) {
         console.log('[SetMatchResultCommand]:', error);
     }
