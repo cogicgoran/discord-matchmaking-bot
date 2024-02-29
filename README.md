@@ -12,3 +12,11 @@ Sorts group of people in lobby into two teams, depending on criteria such as pla
 - Manage Threads ?
 - Read Message History
 - Manage Channels
+
+
+
+# TODO
+Add linter and formatter scripts  
+Run tests  
+Github actions  
+Deploy app to cloud  
