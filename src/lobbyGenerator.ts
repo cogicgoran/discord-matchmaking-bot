@@ -1,4 +1,5 @@
 import config from './config';
+import { getLobby } from './data/queue';
 import type { IPlayer, ILobbyPlayer } from './interfaces';
 import { createMatch } from './repository/matches';
 import { retrieveLobbyPlayers } from './repository/players';
@@ -24,7 +25,8 @@ function calculateTeamRating(players: Array<ILobbyPlayer>) {
 }
 
 export async function makeLobby(playerIds: Array<string>, guildId: string) {
-    if (playerIds.length !== config.MAX_PLAYERS_IN_LOBBY) {
+    const lobby = getLobby(guildId);
+    if (playerIds.length !== lobby.playersInMatch) {
         throw new Error(`Invalid lobby size! Received lobby of size '${playerIds.length}'`);
     }
 
@@ -41,19 +43,18 @@ export async function makeLobby(playerIds: Array<string>, guildId: string) {
     const teamTwo: Array<ILobbyPlayer> = [];
 
     for (let i = 0; i < lobbyPlayers.length; i++) {
-        if (calculateTeamRating(teamOne) >= calculateTeamRating(teamTwo) && teamTwo.length < config.MAX_PLAYERS_IN_LOBBY / 2) {
+        if (calculateTeamRating(teamOne) >= calculateTeamRating(teamTwo) && teamTwo.length < lobby.playersInMatch / 2) {
             teamTwo.push(lobbyPlayers[i]);
-        } else if (teamOne.length === config.MAX_PLAYERS_IN_LOBBY / 2) {
+        } else if (teamOne.length === lobby.playersInMatch / 2) {
             teamTwo.push(lobbyPlayers[i]);
         } else {
             teamOne.push(lobbyPlayers[i]);
         }
     }
 
-    const matchData = await createMatch(teamOne, teamTwo);
+    const matchData = await createMatch({ guildId: guildId, teamOne, teamTwo, winner: null });
 
     return {
-
         teamOne,
         teamTwo,
         print: (): string => {

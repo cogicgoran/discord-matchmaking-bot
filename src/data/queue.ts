@@ -1,4 +1,5 @@
 import { ILobby } from "../interfaces";
+import { MAX_PLAYERS_5V5 } from "../utils/constants";
 
 // guildId map to guild queue
 export const lobbies = new Map<string, { playersInMatch: number; queue: Array<string> }>();
@@ -41,7 +42,7 @@ export function getLobby(guildId: string) {
 
 function makeDefaultLobby(): ILobby {
     return {
-        playersInMatch: 10,
+        playersInMatch: MAX_PLAYERS_5V5,
         queue: []
     };
 }

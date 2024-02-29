@@ -2,9 +2,9 @@ import { Document, ObjectId, WithId } from 'mongodb';
 import databaseClient from '../data/connection';
 import { ILobbyPlayer, IMatch } from '../interfaces';
 
-export async function createMatch(teamOne: Array<ILobbyPlayer>, teamTwo: Array<ILobbyPlayer>) {
-    const matchData = await databaseClient.db('matchmaking').collection('matches').insertOne({ teamOne, teamTwo, winner: null });
-    return matchData;
+export async function createMatch(matchData: IMatch) {
+    const match = await databaseClient.db('matchmaking').collection('matches').insertOne(matchData);
+    return match;
 }
 
 export async function getMatch(matchId: string): Promise<WithId<IMatch>> {

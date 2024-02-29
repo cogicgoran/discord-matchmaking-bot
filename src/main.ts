@@ -6,6 +6,7 @@ import { setMatchResultCommand } from './commands/matches';
 import { createChannelCommand, initChannel, isBotChannel, removeChannel, removeGuild } from './commands/channel';
 import { getTopRatedCommand } from './commands/players';
 import { handleGuildAvailableEvent } from './services/discord.service';
+import { retrieveLobbyPlayers } from './repository/players';
 
 const ADMIN_USERNAME = 'aragok';
 

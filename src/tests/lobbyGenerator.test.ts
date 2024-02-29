@@ -264,3 +264,24 @@ jest.setMock('../repository/matches', {
 // test('Sort accordingly when only one player has blacklisted matched player', () => {
 
 // });
+
+it('should calculate new rating after match correctly', () => {
+    const { calculateNewRating } = require('../services/player.service');
+    // export function calculateNewRating(currentRating: number, enemyAvgLobbyRating: number, isWin: boolean) {
+    expect(calculateNewRating(2, 2, true)).toBe(2.2);
+    expect(calculateNewRating(2, 2, false)).toBe(1.8);
+    expect(calculateNewRating(5, 5, true)).toBe(5.2);
+    expect(calculateNewRating(5, 5, false)).toBe(4.8);
+
+    expect(calculateNewRating(5, 1, true)).toBe(5.04);
+    expect(calculateNewRating(5, 1, false)).toBe(4);
+    expect(calculateNewRating(1, 5, true)).toBe(2);
+    expect(calculateNewRating(1, 5, false)).toBe(0.96);
+
+    // expect(calculateNewRating(10, 0, true)).toBe(10);
+    // expect(calculateNewRating(10, 0, false)).toBe(?);
+    // expect(calculateNewRating(0, 10, true)).toBe(?);
+    // expect(calculateNewRating(0, 10, false)).toBe(0);
+
+
+})

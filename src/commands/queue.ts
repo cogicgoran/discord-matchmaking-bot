@@ -3,11 +3,11 @@ import { createPlayer, getPlayer } from '../repository/players';
 import { IPlayer } from '../interfaces';
 import { makeLobby } from '../lobbyGenerator';
 import { client as discordClient } from '../discord-client/discord-client';
-import config from '../config';
-import { addPlayerToQueue, getLobby, getQueue } from '../data/queue';
+import { addPlayerToQueue, getLobby } from '../data/queue';
+import { DEFAULT_PLAYER_RATING } from '../utils/constants';
 
 export async function queueCommand(message: discord.Message<boolean>) {
-    const queue = getQueue(message.guildId!)!;
+    const lobby = getLobby(message.guildId!);
     try {
         let player = await getPlayer(message.author.id, message.guildId!);
         if (!player) {
@@ -17,12 +17,12 @@ export async function queueCommand(message: discord.Message<boolean>) {
                 blacklistedPlayerId: undefined,
                 username: message.author.username,
                 globalName: message.author.globalName ?? message.author.username,
-                rating: 3
+                rating: DEFAULT_PLAYER_RATING
             }
             await createPlayer(playerData);
             player = (await getPlayer(playerData.discordId, message.guildId!))!;
         };
-        if (queue.includes(player.discordId)) {
+        if (lobby.queue.includes(player.discordId)) {
             (await message.startThread({ name: 'Already queued', autoArchiveDuration: ThreadAutoArchiveDuration.OneHour, reason:"Player is already queued in lobby." }));
             setTimeout(async () => {
                 try {
@@ -35,16 +35,16 @@ export async function queueCommand(message: discord.Message<boolean>) {
         }
         addPlayerToQueue(message.guildId!, player.discordId);
         // TODO: what if multiple requests are sent simultaneously, research how node functions more in depth
-        if (queue.length === config.MAX_PLAYERS_IN_LOBBY) {
-            const lobbyResults = await makeLobby(queue, message.guildId!);
+        if (lobby.queue.length === lobby.playersInMatch) {
+            const lobbyResults = await makeLobby(lobby.queue, message.guildId!);
             const channel = await discordClient.channels.fetch(message.channel.id);
             await (channel as any).send(lobbyResults.print()); // TODO: Investigate, I found this method, but it's not listed in types for some reason
         }
     } catch (error) {
         console.log('[ERROR: QueueCommand]:', error);
     } finally {
-        if (queue.length === config.MAX_PLAYERS_IN_LOBBY) {
-            queue.splice(0);
+        if (lobby.queue.length === lobby.playersInMatch) {
+            lobby.queue.splice(0);
         }
     }
 }

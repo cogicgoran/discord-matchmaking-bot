@@ -24,7 +24,7 @@ export async function createPlayer(playerData: IPlayer) {
 }
 
 export async function retrieveLobbyPlayers(playerIds: Array<string>, guildId: string): Promise<Array<IPlayer>> {
-    const cursor = databaseClient.db('matchmaking').collection('players').find({ discordId: { $in: playerIds }, guildId })
+    const cursor = databaseClient.db('matchmaking').collection('players').find({ discordId: { $in: playerIds }, guildId: { $eq: guildId } })
     const players = await cursor.toArray();
     await cursor.close();
     return players.map((player) => new Player(player));
