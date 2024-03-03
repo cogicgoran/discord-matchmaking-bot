@@ -21,7 +21,7 @@ discordClient.on('guildCreate', (guild) => {
 discordClient.on('guildAvailable', (guild) => {
   // Checks for channels built by bot and save it to memory
   handleGuildAvailableEvent(guild);
-})
+});
 
 discordClient.on('guildDelete', (guild) => {
   removeGuild(guild.id);
@@ -30,7 +30,7 @@ discordClient.on('guildDelete', (guild) => {
 // wrong type?
 discordClient.on('channelDelete', (channel) => {
   removeChannel(channel as NonThreadGuildBasedChannel);
-})
+});
 
 discordClient.on('messageCreate', (message) => {
   if (message.author.bot) return;
@@ -40,7 +40,9 @@ discordClient.on('messageCreate', (message) => {
   }
   if (!isBotChannel(message)) return;
   if (message.content === '!help') {
-    message.reply(`\`!r\` - Register yourself as a player\n\`!q\` - Queue into matchmaking lobby\n\`!lobby\` - List all players in a lobby\n\`!top10\` - List top 10 players with ratings`)
+    message.reply(
+      `\`!r\` - Register yourself as a player\n\`!q\` - Queue into matchmaking lobby\n\`!lobby\` - List all players in a lobby\n\`!top10\` - List top 10 players with ratings`
+    );
     return;
   }
   if (['!r', '!reg', '!register'].includes(message.content)) {
@@ -75,9 +77,9 @@ discordClient.on('messageCreate', (message) => {
   //   blacklistCommand(message);
   //   return;
   // }
-  if (message.content.startsWith("!match")) {
+  if (message.content.startsWith('!match')) {
     setMatchResultCommand(message);
-    return
+    return;
   }
 });
 
