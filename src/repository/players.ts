@@ -4,12 +4,12 @@ import { Player } from "../data/Player";
 
 export async function addPlayer(playerData: IPlayer) {
     const existingPlayer = await getPlayer(playerData.discordId, playerData.guildId);
-    if (existingPlayer) { throw new Error("User already registered") };
+    if (existingPlayer) { throw new Error("User already registered") }
     await databaseClient.db('matchmaking').collection('players').insertOne({ ...playerData });
 }
 
 export async function getPlayer(discordId: string, guildId: string): Promise<IPlayer | null> {
-    const player = await databaseClient.db('matchmaking').collection('players').findOne({ discordId, guildId });
+    const player = await databaseClient.db('matchmaking').collection('players').findOne<IPlayer>({ discordId, guildId });
     if (player) return new Player(player);
     return null;
 }
@@ -24,7 +24,7 @@ export async function createPlayer(playerData: IPlayer) {
 }
 
 export async function retrieveLobbyPlayers(playerIds: Array<string>, guildId: string): Promise<Array<IPlayer>> {
-    const cursor = databaseClient.db('matchmaking').collection('players').find({ discordId: { $in: playerIds }, guildId: { $eq: guildId } })
+    const cursor = databaseClient.db('matchmaking').collection('players').find<IPlayer>({ discordId: { $in: playerIds }, guildId: { $eq: guildId } })
     const players = await cursor.toArray();
     await cursor.close();
     return players.map((player) => new Player(player));

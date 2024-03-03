@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "eslintConfig": {
+    "ignorePatterns": ["**.test.*"],
     "env": {
       "browser": false,
       "es2020": true

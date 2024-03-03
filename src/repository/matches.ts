@@ -1,6 +1,6 @@
-import { Document, ObjectId, WithId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import databaseClient from '../data/connection';
-import { ILobbyPlayer, IMatch } from '../interfaces';
+import { IMatch } from '../interfaces';
 
 export async function createMatch(matchData: IMatch) {
     const match = await databaseClient.db('matchmaking').collection('matches').insertOne(matchData);

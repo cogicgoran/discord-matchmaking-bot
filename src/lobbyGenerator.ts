@@ -1,4 +1,3 @@
-import config from './config';
 import { getLobby } from './data/queue';
 import type { IPlayer, ILobbyPlayer } from './interfaces';
 import { createMatch } from './repository/matches';

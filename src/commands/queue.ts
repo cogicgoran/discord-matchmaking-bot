@@ -1,4 +1,4 @@
-import discord, { ThreadAutoArchiveDuration } from 'discord.js';
+import discord, { TextChannel, ThreadAutoArchiveDuration } from 'discord.js';
 import { createPlayer, getPlayer } from '../repository/players';
 import { IPlayer } from '../interfaces';
 import { makeLobby } from '../lobbyGenerator';
@@ -21,9 +21,9 @@ export async function queueCommand(message: discord.Message<boolean>) {
             }
             await createPlayer(playerData);
             player = (await getPlayer(playerData.discordId, message.guildId!))!;
-        };
+        }
         if (lobby.queue.includes(player.discordId)) {
-            (await message.startThread({ name: 'Already queued', autoArchiveDuration: ThreadAutoArchiveDuration.OneHour, reason:"Player is already queued in lobby." }));
+            (await message.startThread({ name: 'Already queued', autoArchiveDuration: ThreadAutoArchiveDuration.OneHour, reason: "Player is already queued in lobby." }));
             setTimeout(async () => {
                 try {
                     await message.thread?.delete();
@@ -38,7 +38,7 @@ export async function queueCommand(message: discord.Message<boolean>) {
         if (lobby.queue.length === lobby.playersInMatch) {
             const lobbyResults = await makeLobby(lobby.queue, message.guildId!);
             const channel = await discordClient.channels.fetch(message.channel.id);
-            await (channel as any).send(lobbyResults.print()); // TODO: Investigate, I found this method, but it's not listed in types for some reason
+            await (channel as TextChannel).send(lobbyResults.print());
         }
     } catch (error) {
         console.log('[ERROR: QueueCommand]:', error);

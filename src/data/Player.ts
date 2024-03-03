@@ -8,7 +8,7 @@ export class Player implements IPlayer {
     rating: number;
     username: string;
 
-    constructor(data : any) {
+    constructor(data: IPlayer) {
         this.guildId = data.guildId;
         this.blacklistedPlayerId = data.blacklistedPlayerId;
         this.discordId = data.discordId;

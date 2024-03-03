@@ -1,4 +1,4 @@
-import discord, { ChannelType, Guild, GuildBasedChannel } from 'discord.js';
+import discord, { Guild, GuildBasedChannel, NonThreadGuildBasedChannel } from 'discord.js';
 
 // map guildId channelId
 const channelGuilds = new Map<string, string>();
@@ -8,7 +8,7 @@ export async function createChannelCommand(message: discord.Message<boolean>) {
         if (channelGuilds.has(message.guildId!)) {
             message.reply("Channel already created");
             return;
-        };
+        }
         const channel = await message.guild?.channels.create({ name: "Matchmaking" });
         channelGuilds.set(message.guildId!, channel!.id);
         console.log('[ChannelCreated]: Guild name:', channel?.guild.name)
@@ -17,10 +17,10 @@ export async function createChannelCommand(message: discord.Message<boolean>) {
     }
 }
 
-export function removeChannel(channel: any) {
+export function removeChannel(channel: NonThreadGuildBasedChannel) {
     try {
-        if (!channel.has(channel.guildId)) return;
-        channelGuilds.delete(channel.get(channel.guildId));
+        if (!channelGuilds.has(channel.guildId)) return;
+        channelGuilds.delete(channelGuilds.get(channel.guildId)!);
     } catch (error) {
         console.log('[ChannelRemove]:', error);
     }

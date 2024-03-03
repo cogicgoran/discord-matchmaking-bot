@@ -6,7 +6,7 @@ import { setMatchResultCommand } from './commands/matches';
 import { createChannelCommand, initChannel, isBotChannel, removeChannel, removeGuild } from './commands/channel';
 import { getTopRatedCommand } from './commands/players';
 import { handleGuildAvailableEvent } from './services/discord.service';
-import { retrieveLobbyPlayers } from './repository/players';
+import { NonThreadGuildBasedChannel } from 'discord.js';
 
 const ADMIN_USERNAME = 'aragok';
 
@@ -28,8 +28,8 @@ discordClient.on('guildDelete', (guild) => {
 });
 
 // wrong type?
-discordClient.on('channelDelete', (channel: any) => {
-  removeChannel(channel);
+discordClient.on('channelDelete', (channel) => {
+  removeChannel(channel as NonThreadGuildBasedChannel);
 })
 
 discordClient.on('messageCreate', (message) => {
