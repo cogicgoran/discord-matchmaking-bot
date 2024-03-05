@@ -15,7 +15,7 @@ Sorts group of people in lobby into two teams, depending on criteria such as pla
 
 # TODO
 
-Add linter and formatter scripts  
 Run tests  
 Github actions  
-Deploy app to cloud
+Deploy app to cloud  
+Remove !MM_INIT command and automatically create channel

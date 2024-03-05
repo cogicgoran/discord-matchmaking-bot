@@ -7,6 +7,7 @@ import { createChannelCommand, initChannel, isBotChannel, removeChannel, removeG
 import { getTopRatedCommand } from './commands/players';
 import { handleGuildAvailableEvent } from './services/discord.service';
 import { NonThreadGuildBasedChannel } from 'discord.js';
+import { initDatabase } from './data/connection';
 
 const ADMIN_USERNAME = 'aragok';
 
@@ -84,3 +85,4 @@ discordClient.on('messageCreate', (message) => {
 });
 
 discordClient.login(config.env['DISCORD_BOT_TOKEN']);
+initDatabase();

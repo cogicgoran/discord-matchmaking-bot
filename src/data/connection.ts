@@ -9,7 +9,7 @@ const client = new MongoClient(config.env.MONGO_URI, {
   },
 });
 
-async function initDatabase() {
+export async function initDatabase() {
   try {
     await client.connect();
   } catch (error) {
@@ -17,7 +17,5 @@ async function initDatabase() {
     process.exit(1);
   }
 }
-
-initDatabase();
 
 export default client;

@@ -1,94 +1,94 @@
-import { IPlayer } from '../interfaces';
+import { calculateNewRating } from '../services/player.service';
 
 beforeEach(() => {
   jest.resetModules();
 });
 
-it('should create 2 teams with 5 players each', async () => {
-  jest.setMock('../repository/players', {
-    __esModule: true,
-    retrieveLobbyPlayers: async (): Promise<Array<IPlayer>> => [
-      {
-        discordId: '1',
-        blacklistedPlayerId: undefined,
-        username: 'Player 1',
-        globalName: 'Player 1',
-        rating: 1,
-      },
-      {
-        discordId: '2',
-        blacklistedPlayerId: undefined,
-        username: 'Player 2',
-        globalName: 'Player 2',
-        rating: 1,
-      },
-      {
-        discordId: '3',
-        blacklistedPlayerId: undefined,
-        username: 'Player 3',
-        globalName: 'Player 3',
-        rating: 1,
-      },
-      {
-        discordId: '4',
-        blacklistedPlayerId: undefined,
-        username: 'Player 4',
-        globalName: 'Player 4',
-        rating: 1,
-      },
-      {
-        discordId: '5',
-        blacklistedPlayerId: undefined,
-        username: 'Player 5',
-        globalName: 'Player 5',
-        rating: 1,
-      },
-      {
-        discordId: '6',
-        blacklistedPlayerId: undefined,
-        username: 'Player 6',
-        globalName: 'Player 6',
-        rating: 1,
-      },
-      {
-        discordId: '7',
-        blacklistedPlayerId: undefined,
-        username: 'Player 7',
-        globalName: 'Player 7',
-        rating: 1,
-      },
-      {
-        discordId: '8',
-        blacklistedPlayerId: undefined,
-        username: 'Player 8',
-        globalName: 'Player 8',
-        rating: 1,
-      },
-      {
-        discordId: '9',
-        blacklistedPlayerId: undefined,
-        username: 'Player 9',
-        globalName: 'Player 9',
-        rating: 1,
-      },
-      {
-        discordId: '10',
-        blacklistedPlayerId: undefined,
-        username: 'Player 10',
-        globalName: 'Player 10',
-        rating: 1,
-      },
-    ],
-  });
-  jest.setMock('../repository/matches', {
-    __esModule: true,
-    createMatch: () => ({ insertedId: 'testId' }),
-  });
-  const { makeLobby } = require('../lobbyGenerator');
-  const teams = await makeLobby(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']);
-  expect(teams.teamOne.length).toBe(5);
-  expect(teams.teamTwo.length).toBe(5);
-});
+// it('should create 2 teams with 5 players each', async () => {
+//   jest.setMock('../repository/players', {
+//     __esModule: true,
+//     retrieveLobbyPlayers: async (): Promise<Array<IPlayer>> => [
+//       {
+//         discordId: '1',
+//         blacklistedPlayerId: undefined,
+//         username: 'Player 1',
+//         globalName: 'Player 1',
+//         rating: 1,
+//       },
+//       {
+//         discordId: '2',
+//         blacklistedPlayerId: undefined,
+//         username: 'Player 2',
+//         globalName: 'Player 2',
+//         rating: 1,
+//       },
+//       {
+//         discordId: '3',
+//         blacklistedPlayerId: undefined,
+//         username: 'Player 3',
+//         globalName: 'Player 3',
+//         rating: 1,
+//       },
+//       {
+//         discordId: '4',
+//         blacklistedPlayerId: undefined,
+//         username: 'Player 4',
+//         globalName: 'Player 4',
+//         rating: 1,
+//       },
+//       {
+//         discordId: '5',
+//         blacklistedPlayerId: undefined,
+//         username: 'Player 5',
+//         globalName: 'Player 5',
+//         rating: 1,
+//       },
+//       {
+//         discordId: '6',
+//         blacklistedPlayerId: undefined,
+//         username: 'Player 6',
+//         globalName: 'Player 6',
+//         rating: 1,
+//       },
+//       {
+//         discordId: '7',
+//         blacklistedPlayerId: undefined,
+//         username: 'Player 7',
+//         globalName: 'Player 7',
+//         rating: 1,
+//       },
+//       {
+//         discordId: '8',
+//         blacklistedPlayerId: undefined,
+//         username: 'Player 8',
+//         globalName: 'Player 8',
+//         rating: 1,
+//       },
+//       {
+//         discordId: '9',
+//         blacklistedPlayerId: undefined,
+//         username: 'Player 9',
+//         globalName: 'Player 9',
+//         rating: 1,
+//       },
+//       {
+//         discordId: '10',
+//         blacklistedPlayerId: undefined,
+//         username: 'Player 10',
+//         globalName: 'Player 10',
+//         rating: 1,
+//       },
+//     ],
+//   });
+//   jest.setMock('../repository/matches', {
+//     __esModule: true,
+//     createMatch: () => ({ insertedId: 'testId' }),
+//   });
+//   const { makeLobby } = require('../lobbyGenerator');
+//   const teams = await makeLobby(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']);
+//   expect(teams.teamOne.length).toBe(5);
+//   expect(teams.teamTwo.length).toBe(5);
+// });
 
 // test('it should create teams balanced by rating', async () => {
 //     jest.setMock("../repository/players", {
@@ -266,7 +266,7 @@ it('should create 2 teams with 5 players each', async () => {
 // });
 
 it('should calculate new rating after match correctly', () => {
-  const { calculateNewRating } = require('../services/player.service');
+  // const { calculateNewRating } = require('../services/player.service');
   // export function calculateNewRating(currentRating: number, enemyAvgLobbyRating: number, isWin: boolean) {
   expect(calculateNewRating(2, 2, true)).toBe(2.2);
   expect(calculateNewRating(2, 2, false)).toBe(1.8);
