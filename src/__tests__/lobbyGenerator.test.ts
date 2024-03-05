@@ -1,83 +1,28 @@
 import { calculateNewRating } from '../services/player.service';
+import { mockCreatePlayerWithRating } from '../__mocks__/mockFactory';
+import { IPlayer } from '../interfaces';
+import { ExplainVerbosity } from 'mongodb';
+import { LobbyGenerator } from '../lobbyGenerator';
 
 beforeEach(() => {
-  jest.resetModules();
+  // jest.resetModules();
+  // jest.restoreAllMocks();
 });
 
 // it('should create 2 teams with 5 players each', async () => {
 //   jest.setMock('../repository/players', {
 //     __esModule: true,
 //     retrieveLobbyPlayers: async (): Promise<Array<IPlayer>> => [
-//       {
-//         discordId: '1',
-//         blacklistedPlayerId: undefined,
-//         username: 'Player 1',
-//         globalName: 'Player 1',
-//         rating: 1,
-//       },
-//       {
-//         discordId: '2',
-//         blacklistedPlayerId: undefined,
-//         username: 'Player 2',
-//         globalName: 'Player 2',
-//         rating: 1,
-//       },
-//       {
-//         discordId: '3',
-//         blacklistedPlayerId: undefined,
-//         username: 'Player 3',
-//         globalName: 'Player 3',
-//         rating: 1,
-//       },
-//       {
-//         discordId: '4',
-//         blacklistedPlayerId: undefined,
-//         username: 'Player 4',
-//         globalName: 'Player 4',
-//         rating: 1,
-//       },
-//       {
-//         discordId: '5',
-//         blacklistedPlayerId: undefined,
-//         username: 'Player 5',
-//         globalName: 'Player 5',
-//         rating: 1,
-//       },
-//       {
-//         discordId: '6',
-//         blacklistedPlayerId: undefined,
-//         username: 'Player 6',
-//         globalName: 'Player 6',
-//         rating: 1,
-//       },
-//       {
-//         discordId: '7',
-//         blacklistedPlayerId: undefined,
-//         username: 'Player 7',
-//         globalName: 'Player 7',
-//         rating: 1,
-//       },
-//       {
-//         discordId: '8',
-//         blacklistedPlayerId: undefined,
-//         username: 'Player 8',
-//         globalName: 'Player 8',
-//         rating: 1,
-//       },
-//       {
-//         discordId: '9',
-//         blacklistedPlayerId: undefined,
-//         username: 'Player 9',
-//         globalName: 'Player 9',
-//         rating: 1,
-//       },
-//       {
-//         discordId: '10',
-//         blacklistedPlayerId: undefined,
-//         username: 'Player 10',
-//         globalName: 'Player 10',
-//         rating: 1,
-//       },
+//       mockCreatePlayerWithRating(1),
+//       mockCreatePlayerWithRating(1),
+//       mockCreatePlayerWithRating(1),
+//       mockCreatePlayerWithRating(1),
+//       mockCreatePlayerWithRating(1),
+//       mockCreatePlayerWithRating(1),
+//       mockCreatePlayerWithRating(1),
+//       mockCreatePlayerWithRating(1),
+//       mockCreatePlayerWithRating(1),
+//       mockCreatePlayerWithRating(1),
 //     ],
 //   });
 //   jest.setMock('../repository/matches', {
@@ -282,4 +227,84 @@ it('should calculate new rating after match correctly', () => {
   // expect(calculateNewRating(10, 0, false)).toBe(?);
   // expect(calculateNewRating(0, 10, true)).toBe(?);
   // expect(calculateNewRating(0, 10, false)).toBe(0);
+});
+
+test("generated lobby player's rating with no deviation", () => {
+  // jest.requireActual('../lob')
+  // generateLobbyPlayer = jest.fn();
+  const spyGenerateLobbyPlayer = jest.spyOn(LobbyGenerator, 'generateLobbyPlayer');
+  spyGenerateLobbyPlayer.mockReturnValueOnce({
+    discordId: '1',
+    username: 'pUsername',
+    globalName: 'pGlobalName',
+    teamProbability: 5,
+    rating: 1,
+    blacklistedPlayerId: undefined,
+    blacklistedBy: [],
+  });
+  const player: IPlayer = {
+    guildId: '1',
+    discordId: '1',
+    blacklistedPlayerId: undefined,
+    username: 'pUsername',
+    globalName: 'pGlobalName',
+    rating: 1,
+  };
+  expect(LobbyGenerator.generateLobbyPlayer(player, [player], 0)).toEqual({
+    discordId: '1',
+    username: 'pUsername',
+    globalName: 'pGlobalName',
+    teamProbability: 5,
+    rating: 1,
+    blacklistedPlayerId: undefined,
+    blacklistedBy: [],
+  });
+});
+
+test("generated lobby player's rating with deviation", () => {
+  const spyGetSaltedRating = jest.spyOn(LobbyGenerator, 'getSaltedRating');
+  let player: IPlayer = {
+    guildId: '1',
+    discordId: '1',
+    blacklistedPlayerId: undefined,
+    username: 'pUsername',
+    globalName: 'pGlobalName',
+    rating: 2,
+  };
+  spyGetSaltedRating.mockReturnValueOnce(1);
+
+  let generatedLobbyPlayer = LobbyGenerator.generateLobbyPlayer(player, [player], 1);
+  expect(spyGetSaltedRating).toHaveBeenCalled();
+  expect(generatedLobbyPlayer).toMatchObject({
+    discordId: '1',
+    username: 'pUsername',
+    globalName: 'pGlobalName',
+    teamProbability: 5,
+    blacklistedPlayerId: undefined,
+    blacklistedBy: [],
+  });
+  expect(generatedLobbyPlayer).toHaveProperty('rating');
+  expect(generatedLobbyPlayer.rating).toBe(3);
+
+  // player = {
+  //   guildId: '1',
+  //   discordId: '1',
+  //   blacklistedPlayerId: undefined,
+  //   username: 'pUsername',
+  //   globalName: 'pGlobalName',
+  //   rating: 6,
+  // }
+  // generatedLobbyPlayer = generateLobbyPlayer(player, [player], 2);
+  // expect(generatedLobbyPlayer).toMatchObject({
+  //   discordId: '1',
+  //   username: 'pUsername',
+  //   globalName: 'pGlobalName',
+  //   teamProbability: 5,
+  //   blacklistedPlayerId: undefined,
+  //   blacklistedBy: [],
+  // });
+  // expect(randomFnMock).toHaveBeenCalledTimes(1);
+  // expect(generatedLobbyPlayer).toHaveProperty('rating');
+  // expect(generatedLobbyPlayer.rating).toBeGreaterThanOrEqual(4);
+  // expect(generatedLobbyPlayer.rating).toBeLessThanOrEqual(8);
 });

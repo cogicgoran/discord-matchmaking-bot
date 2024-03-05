@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "type": "module",
   "description": "",
-  "main": "index.js",
+  "main": "src/main.ts",
   "scripts": {
     "start": "node --loader ts-node/esm src/main",
+    "build": "tsc --noEmit",
     "lint": "eslint src --ext ts --report-unused-disable-directives --max-warnings 0",
     "test": "jest",
     "format": "prettier --check --ignore-path .gitignore .",

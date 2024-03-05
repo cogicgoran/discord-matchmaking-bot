@@ -1,7 +1,7 @@
 import discord, { TextChannel, ThreadAutoArchiveDuration } from 'discord.js';
 import { createPlayer, getPlayer } from '../repository/players';
 import { IPlayer } from '../interfaces';
-import { makeLobby } from '../lobbyGenerator';
+import { LobbyGenerator } from '../lobbyGenerator';
 import { client as discordClient } from '../discord-client/discord-client';
 import { addPlayerToQueue, getLobby } from '../data/queue';
 import { DEFAULT_PLAYER_RATING } from '../utils/constants';
@@ -40,7 +40,7 @@ export async function queueCommand(message: discord.Message<boolean>) {
     addPlayerToQueue(message.guildId!, player.discordId);
     // TODO: what if multiple requests are sent simultaneously, research how node functions more in depth
     if (lobby.queue.length === lobby.playersInMatch) {
-      const lobbyResults = await makeLobby(lobby.queue, message.guildId!);
+      const lobbyResults = await LobbyGenerator.makeLobby(lobby.queue, message.guildId!);
       const channel = await discordClient.channels.fetch(message.channel.id);
       await (channel as TextChannel).send(lobbyResults.print());
     }
