@@ -9,7 +9,6 @@ export interface IPlayer {
 
 export interface ILobbyPlayer extends Pick<IPlayer, 'discordId' | 'globalName' | 'rating' | 'username' | 'blacklistedPlayerId'> {
   blacklistedBy: Array<IPlayer>;
-  teamProbability: number;
 }
 
 export interface ILobby {

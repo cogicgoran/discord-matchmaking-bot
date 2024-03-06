@@ -21,7 +21,6 @@ export class LobbyGenerator {
       discordId: player.discordId,
       username: player.username,
       globalName: player.globalName,
-      teamProbability: 5,
       rating: player.rating + LobbyGenerator.getSaltedRating(maxDeviation),
       blacklistedPlayerId: player.blacklistedPlayerId,
       blacklistedBy: allPlayers.filter((otherPlayer) => otherPlayer.blacklistedPlayerId === player.discordId),
@@ -49,21 +48,7 @@ export class LobbyGenerator {
 
     lobbyPlayers.sort((p1: ILobbyPlayer, p2: ILobbyPlayer) => p2.rating - p1.rating);
 
-    const teamOne: Array<ILobbyPlayer> = [];
-    const teamTwo: Array<ILobbyPlayer> = [];
-
-    for (let i = 0; i < lobbyPlayers.length; i++) {
-      if (
-        LobbyGenerator.calculateTeamRating(teamOne) >= LobbyGenerator.calculateTeamRating(teamTwo) &&
-        teamTwo.length < lobby.playersInMatch / 2
-      ) {
-        teamTwo.push(lobbyPlayers[i]);
-      } else if (teamOne.length === lobby.playersInMatch / 2) {
-        teamTwo.push(lobbyPlayers[i]);
-      } else {
-        teamOne.push(lobbyPlayers[i]);
-      }
-    }
+    const { teamOne, teamTwo } = LobbyGenerator.createTeams(lobbyPlayers);
 
     const matchData = await createMatch({ guildId: guildId, teamOne, teamTwo, winner: null });
 
@@ -82,6 +67,27 @@ export class LobbyGenerator {
         });
         return output;
       },
+    };
+  }
+
+  static createTeams(lobbyPlayers: Array<ILobbyPlayer>) {
+    const playersPerTeam = lobbyPlayers.length / 2;
+    const teamOne: Array<ILobbyPlayer> = [];
+    const teamTwo: Array<ILobbyPlayer> = [];
+
+    for (let i = 0; i < lobbyPlayers.length; i++) {
+      if (i === 1) console.log(teamOne, teamTwo);
+      if (LobbyGenerator.calculateTeamRating(teamOne) >= LobbyGenerator.calculateTeamRating(teamTwo) && teamTwo.length < playersPerTeam) {
+        teamTwo.push(lobbyPlayers[i]);
+      } else if (teamOne.length === playersPerTeam) {
+        teamTwo.push(lobbyPlayers[i]);
+      } else {
+        teamOne.push(lobbyPlayers[i]);
+      }
+    }
+    return {
+      teamOne,
+      teamTwo,
     };
   }
 }
