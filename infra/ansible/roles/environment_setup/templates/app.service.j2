@@ -1,0 +1,15 @@
+[Unit]
+Description=Matchmaking bot application
+After=network.target
+RestartSec=10
+StartLimitIntervalSec=180
+
+[Service]
+User={{application_username}}
+WorkingDirectory=/home/{{application_username}}/{{app_repo_name}}
+ExecStart=/usr/bin/npm start
+Restart=always
+StartLimitBurst=3
+
+[Install]
+WantedBy=multi-user.target
