@@ -1,0 +1,9 @@
+---
+
+- hosts: all
+  become: true
+  vars_files: 
+    - ../vault.yaml
+  roles:
+    - ../roles/instance_setup
+    - ../roles/environment_setup

@@ -1,0 +1,55 @@
+- name: Clone application's github repo
+  git:
+    repo: "https://github.com/cogicgoran/{{app_repo_name}}.git"
+    dest: "/home/{{application_username}}/{{app_repo_name}}"
+    version: "{{github_repo_branch}}"
+
+- name: Create .env file
+  template:
+    src: ".env.j2"
+    dest: "/home/{{application_username}}/{{app_repo_name}}/.env"
+    mode: "0664"
+
+- name: Create system service for running application
+  template:
+    src: "app.service.j2"
+    dest: "/lib/systemd/system/matchmaking_bot.service"
+    group: "root"
+    mode: "0664"
+
+
+- name: Add line in sudoers to allow any user to start, restart, stop and status the application service
+  lineinfile:
+    path: /etc/sudoers
+    line: "{{application_username}} ALL=(ALL) NOPASSWD: /bin/systemctl start matchmaking_bot.service, /bin/systemctl restart matchmaking_bot.service, /bin/systemctl stop matchmaking_bot.service, /bin/systemctl status matchmaking_bot.service"
+    state: present
+    validate: '/usr/sbin/visudo -cf %s'
+
+
+- name: Install the gpg key for nodejs LTS
+  apt_key:
+    url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+    state: present
+      
+- name: Install the nodejs LTS repos
+  apt_repository:
+    repo: "deb https://deb.nodesource.com/node_{{ NODEJS_VERSION }}.x {{ ansible_distribution_release }} main"
+    state: present
+    update_cache: yes
+
+- name: Install the nodejs
+  apt:
+    name: nodejs
+    state: present
+
+- name: Run npm install inside API root dir
+  shell: npm install
+  args:
+    chdir: "/home/{{application_username}}/{{app_repo_name}}"
+
+- name: Ensure the application service is running
+  systemd:
+    name: matchmaking_bot.service
+    enabled: true
+    state: started
+    daemon_reload: true

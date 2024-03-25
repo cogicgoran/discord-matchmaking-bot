@@ -1,0 +1,10 @@
+# Terrafrom ignored files
+/terraform/.terraform/
+/terraform/.terraform.lock.hcl
+/terraform/terraform.tfstate
+/terraform/terraform.tfstate.backup
+
+# Ansible ignored files
+/ansible/vault_pass.txt
+/ansible/vault.yaml
+/ansible/hosts

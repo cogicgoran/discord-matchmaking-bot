@@ -76,7 +76,6 @@ export class LobbyGenerator {
     const teamTwo: Array<ILobbyPlayer> = [];
 
     for (let i = 0; i < lobbyPlayers.length; i++) {
-      if (i === 1) console.log(teamOne, teamTwo);
       if (LobbyGenerator.calculateTeamRating(teamOne) >= LobbyGenerator.calculateTeamRating(teamTwo) && teamTwo.length < playersPerTeam) {
         teamTwo.push(lobbyPlayers[i]);
       } else if (teamOne.length === playersPerTeam) {
