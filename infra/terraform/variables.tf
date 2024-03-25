@@ -9,9 +9,9 @@ variable "your_trusted_machine_ip" {
 }
 
 locals {
-  ansible_public_key          = file(var.path_to_ansible_public_key)
-  ansible_private_key         = file(var.path_to_ansible_private_key)
-  root_public_key             = file(var.path_to_root_public_key)
+  ansible_public_key  = file(var.path_to_ansible_public_key)
+  ansible_private_key = file(var.path_to_ansible_private_key)
+  root_public_key     = file(var.path_to_root_public_key)
 }
 
 variable "path_to_root_private_key" {
