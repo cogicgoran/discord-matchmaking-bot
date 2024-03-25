@@ -1,0 +1,9 @@
+private_key_file:
+public_key_file_path:
+app_repo_name: discord-matchmaking-bot
+github_repo_branch: main
+
+application_username: discord-matchmaking-bot
+NODEJS_VERSION: "20"
+APP_ENV_MONGO_URI:
+APP_ENV_DISCORD_BOT_TOKEN:
