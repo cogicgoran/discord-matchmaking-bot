@@ -1,7 +1,7 @@
 import { calculateNewRating } from '../services/player.service';
 import { mockCreateLobbyPlayerWithRating, mockCreatePlayerWithRating } from '../__mocks__/mockFactory';
 import { ILobbyPlayer, IPlayer } from '../interfaces';
-import { ExplainVerbosity, ObjectId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { LobbyGenerator } from '../lobbyGenerator';
 import * as playerRepository from '../repository/players';
 import * as matchRepository from '../repository/matches';
