@@ -21,9 +21,9 @@ Deploy app to cloud
 Remove !MM_INIT command and automatically create channel
 
 ## Deployment
+
 Create infrastructure
 On infra creation setup server, programs, get code, start app
 On commit run tests, lint, formatter and only then `update server`
-
 
 remove password authentication

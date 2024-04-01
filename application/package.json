@@ -9,7 +9,7 @@
     "build": "tsc --noEmit",
     "lint": "eslint src --ext ts --report-unused-disable-directives --max-warnings 0",
     "test": "jest",
-    "format": "prettier --check --ignore-path .gitignore .",
+    "format:check": "prettier --check --ignore-path .gitignore .",
     "format:fix": "prettier --write --ignore-path .gitignore ."
   },
   "keywords": [],
