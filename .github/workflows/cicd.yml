@@ -10,7 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - working-directory: ./application
       - name: 'Checkout code'
         uses: actions/checkout@v4
       - name: 'Set up Node v20'
@@ -18,12 +17,17 @@ jobs:
         with:
           node-version: '20.10.0'
       - name: 'Install dependencies'
+        working-directory: ./application
         run: npm install
       - name: 'Lint code'
+        working-directory: ./application
         run: npm run lint
       - name: 'Check formatting'
+        working-directory: ./application
         run: npm run format:check
       - name: 'Run tests'
+        working-directory: ./application
         run: npm run test
       - name: 'Build application'
+        working-directory: ./application
         run: npm run build
