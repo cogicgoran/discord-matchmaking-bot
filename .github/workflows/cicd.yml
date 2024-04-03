@@ -38,7 +38,7 @@ jobs:
           ssh-private-key: ${{ secrets.PRIVATE_SSH_KEY }}
           ssh-host: ${{ secrets.SERVER_IP }}
       - name: Pull the latest code changes
-        run: ssh discord-matchmaking-bot@${{ secrets.SERVER_IP }} "cd discord-matchmaking-bot && git pull"
+        run: ssh ${{ secrets.SERVER_IP }} "cd /home/discord-matchmakingbot/discord-matchmaking-bot && git pull"
       - name: Stop old service
         run: ssh discord-matchmaking-bot@${{ secrets.SERVER_IP }} "systemctl stop matchmaking_bot"
       # - name: rebuild env files
